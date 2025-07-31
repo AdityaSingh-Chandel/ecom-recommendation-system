@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Recommender System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Product Recommender</h1>
+        <p>Select or enter a User ID to get personalized product recommendations.</p>
+        
+        <div class="input-group">
+            <select id="userIdSelect">
+                <option value="" disabled selected>-- Fetching IDs... --</option>
+            </select>
+            <input type="text" id="userIdInput" placeholder="or enter a new ID" value="">
+            <button id="getRecsButton">Get Recommendations</button>
+        </div>
+
+        <div id="recommendations">
+            <p>Your recommendations will appear here.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        select, input[type="text"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        select {
+            max-width: 250px;
+        }
+        button {
+            padding: 12px 25px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #recommendations {
+            margin-top: 30px;
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            text-align: left;
+        }
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .product-card h3 {
+            font-size: 1em;
+            margin: 0 0 5px 0;
+            color: #444;
+        }
+        .product-card p {
+            font-size: 0.8em;
+            color: #777;
+            margin: 0;
+        }
+        .loading, .error {
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        .loading {
+            color: #007bff;
+        }
+        .error {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Product Recommender</h1>
+        <p>Select or enter a User ID to get personalized product recommendations.</p>
+        
+        <div class="input-group">
+            <select id="userIdSelect">
+                <option value="" disabled selected>-- Fetching IDs... --</option>
+            </select>
+            <input type="text" id="userIdInput" placeholder="or enter a new ID" value="">
+            <button id="getRecsButton">Get Recommendations</button>
+        </div>
+
+        <div id="recommendations">
+            <p>Your recommendations will appear here.</p>
+        </div>
+    </div>
+
+    <script>
+        const userIdSelect = document.getElementById('userIdSelect');
+        const userIdInput = document.getElementById('userIdInput');
+        const getRecsButton = document.getElementById('getRecsButton');
+        const recommendationsDiv = document.getElementById('recommendations');
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        // Function to fetch the list of valid user IDs from the API
+        async function fetchUserIds() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users`);
+                if (!response.ok) {
+                    throw new Error('Could not fetch user IDs from the API.');
+                }
+                const userIds = await response.json();
+                
+                // Clear the default option
+                userIdSelect.innerHTML = '';
+                
+                // Add a placeholder option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '-- Select an ID --';
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                userIdSelect.appendChild(defaultOption);
+
+                // Populate the dropdown with the fetched IDs
+                userIds.forEach(id => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = id;
+                    userIdSelect.appendChild(option);
+                });
+
+                // Pre-select the first ID for convenience
+                if (userIds.length > 0) {
+                    userIdSelect.value = userIds[0];
+                    userIdInput.value = userIds[0];
+                }
+            } catch (error) {
+                console.error(error);
+                userIdSelect.innerHTML = '<option>-- Error fetching IDs --</option>';
+            }
+        }
+
+        // Call the function to fetch IDs when the page loads
+        document.addEventListener('DOMContentLoaded', fetchUserIds);
+
+        // Event listener for the dropdown
+        userIdSelect.addEventListener('change', () => {
+            userIdInput.value = userIdSelect.value;
+        });
+
+        getRecsButton.addEventListener('click', async () => {
+            const userId = userIdInput.value.trim();
+            if (!userId) {
+                recommendationsDiv.innerHTML = '<p class="error">Please select or enter a User ID.</p>';
+                return;
+            }
+            recommendationsDiv.innerHTML = '<p class="loading">Fetching recommendations...</p>';
+            
+            const apiUrl = `${API_BASE_URL}/recommendations/${userId}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'An unknown error occurred.');
+                }
+
+                const recommendations = await response.json();
+
+                if (recommendations.length > 0) {
+                    const html = recommendations.map(item => `
+                        <div class="product-card">
+                            <img src="${item.image_url}" alt="${item.name}">
+                            <h3>${item.name}</h3>
+                            <p>Score: ${item.score.toFixed(4)}</p>
+                        </div>
+                    `).join('');
+                    recommendationsDiv.innerHTML = html;
+                } else {
+                    recommendationsDiv.innerHTML = `<p class="error">No recommendations found for user "${userId}".</p>`;
+                }
+
+            } catch (error) {
+                recommendationsDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html> -->
